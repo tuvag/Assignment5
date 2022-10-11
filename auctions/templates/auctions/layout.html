@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}Auctions{% endblock %}</title>
+        <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
+        <link rel="stylesheet" href="{% static 'auctions/uaa490styles.css' %}" >
+    </head>
+    <body>
+        <header>
+            <h1>Auctions "R" Us</h1>
+            <nav>
+                <span>
+                    <a href="{% url 'index' %}">Active Listings</a>
+                    <a href="#">Categories</a>
+                    <a href="#">Watchlist</a>
+                    <a href="#">Create Listing</a>
+                </span>
+                <span>
+                    {% if user.is_authenticated %}
+                        Welcome <strong>{{ user.username }}!</strong>
+                        <a href="{% url 'logout' %}">Log Out</a>
+                    {% else %}
+                        <a href="{% url 'login' %}">Log In</a>
+                        <a href="{% url 'register' %}">Register</a>
+                    {% endif %}
+                </span>
+            </nav>
+        </header>
+        <main>
+            {% block main %}
+            {% endblock %}
+        </main>
+    </body>
+</html>
