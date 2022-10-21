@@ -2,16 +2,30 @@ nav {
   display: flex;
   justify-content: space-between;
   padding: 14px 18px;
+  background-color: #3A9BDC;
+  color: whitesmoke;
 }
 
 body > header { 
   padding: 0 0.5rem .75rem 0.5rem;
+  background-color: #3A9BDC;
 }
 
 body {
   grid-template-columns: 10% 80% 10%;
 }
+nav .a{
+  color: whitesmoke;
+}
 
 .form-control {
   width: 50%;
+}
+
+.h1 {
+  color: rgb(51, 51, 51);
+}
+
+.input{
+  background-color: #3A9BDC;
 }
