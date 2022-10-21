@@ -12,16 +12,16 @@ from .models import *
 """ class CreateListingForm(forms.Form):
     item_name = forms.CharField(label ="item_name")
     item_price = forms.IntegerField(label="item_price")
-    category = forms.CharField(label="tag")
+    category = forms.CharField(label="l_category")
     description = forms.CharField(label= "description") """
 
 class CreateListingForm(forms.ModelForm):
         class Meta:
             model = Listings
-            fields = ('item_name', 'price', 'tag', 'description')
-
+            fields = ('item_name', 'price', 'listing_category', 'description')
+           
 def index(request):
-    return render(request, "auctions/index.html")
+    return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
 
 
 def login_view(request):
@@ -79,13 +79,14 @@ def create_listing(request):
     if request.method == "POST":
         form = CreateListingForm(request.POST)
         if form.is_valid():
+
             form.save()
             return redirect("auctions/index.html")
             # if request.user.is_authenticated:
             #     name = request.user
             # item_name = form.cleaned_data["item_name"]
             # price = form.cleaned_data["item_price"]
-            # category = form.cleaned_data["tag"]
+            # category = form.cleaned_data["l_category"]
             # description = form.cleaned_data["description"]
             # date_created = datetime.now()
             # picture goes here
@@ -93,7 +94,7 @@ def create_listing(request):
             msg = "Invalid entry. Please try again."
             return render(request,"auctions/create.html", {"form": form, "message": msg})
         #add photo to listing
-        # new_listing = Listings(name=name, item_name=item_name, description=description, price=price, date_created=date_created, tag=category)
+        # new_listing = Listings(name=name, item_name=item_name, description=description, price=price, date_created=date_created, category=l_category)
 
         # new_listing.save()
     else:
@@ -103,12 +104,15 @@ def create_listing(request):
 def listing(request, listing_id):
     listing = Listings.objects.get(pk=listing_id)
    
-    return render(request, "auctions/listing.html",{"listing":listing,})
+    return render(request, "auctions/listing.html",{"listings":listing})
 
 
 def categories(request):
-    categories = Categories.objects.all()
-    return render(request, "auctions/categories.html", {"categories": categories})
+    return render(request, "auctions/categories.html", {"l_category": Categories.objects.all()})
+
+def filter_category(request, id):
+    listings_category = Listings.objects.filter(listing_category = id)
+    return render(request, "auctions/index.html", {"listing_category": listings_category})
 
 def watchlist(request):
     items_to_show = Watchlist.objects.get(user = request.user) 

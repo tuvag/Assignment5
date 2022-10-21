@@ -9,14 +9,14 @@
     <input id="item_name" name="item_name">
     <label for="price">Price: </label>
     <input id="price" name="price">
-    <label for="tag">Category: </label>
-    <select id="tag" name="tag">
+    <label for="category">Category: </label>
+    <select id="category" name="category">
         {% for c in categories %} 
          <option value="{{c.id}}">{{category}}</option> 
          {% endfor %}
     </select>
     <label for="description">Description: </label>
-    <textarea rows="5" cols="80" id="tag" name="tag"> </textarea> -->
+    <textarea rows="5" cols="80" id="category" name="category"> </textarea> -->
 
     <input type="submit" value="submit">
 </form>
