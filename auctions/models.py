@@ -1,8 +1,13 @@
+from datetime import datetime
 from distutils.command.upload import upload
 from unicodedata import category
+from urllib import request
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.forms import ImageField
+from urllib.request import urlopen
+from django.core.files import File
+from tempfile import NamedTemporaryFile
 
 
 class User(AbstractUser):
@@ -20,14 +25,21 @@ class Listings(models.Model):
     item_name = models.CharField(max_length = 64)
     description = models.CharField(max_length= 256)
     price = models.IntegerField()
-    # add photo query here
-    date_created = models.DateField()
-    sold = models.BooleanField()
+    date_created = models.DateField(auto_now_add=True)
+    sold = models.BooleanField(default=False)
     buyer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="buyer")
-    picture = models.CharField(max_length = 64)
-    #pic = ImageField(upload_to='images/')
+    img = models.ImageField(upload_to='images/', blank=True)
+    url_img = models.URLField()
     listing_category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name="l_category")
     lister = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="lister")
+
+    def save(self, *args, **kwargs):
+        if self.url_img and not self.img:
+            img_temp = NamedTemporaryFile(delete=True)
+            img_temp.write(urlopen(self.url_img).read())
+            img_temp.flush()
+            self.img.save(f"image_{self.pk}", File(img_temp))
+        super(Listings, self).save(*args, **kwargs)
 
 
 class Watchlist(models.Model):

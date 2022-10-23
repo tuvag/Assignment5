@@ -4,7 +4,7 @@ from django.contrib import admin
 from .models import Listings, Categories, Comments, Watchlist
 
 class ListingsAdmin(admin.ModelAdmin):
-    list_display = ("id", "item_name", "price", "date_created", "picture", "sold", "buyer", "lister")
+    list_display = ("id", "item_name", "price", "img", "date_created")
 
 class CategoriesAdmin(admin.ModelAdmin):
     list_display = ("id", "category")

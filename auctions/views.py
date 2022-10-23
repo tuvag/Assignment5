@@ -1,4 +1,5 @@
 from unicodedata import category
+from urllib import request
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
@@ -16,9 +17,14 @@ from .models import *
     description = forms.CharField(label= "description") """
 
 class CreateListingForm(forms.ModelForm):
-        class Meta:
-            model = Listings
-            fields = ('item_name', 'price', 'listing_category', 'description')
+
+    class Meta:
+        model = Listings
+        fields = ('item_name', 'price', 'listing_category', 'img', 'description')
+
+    #buyer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="buyer")
+   # url_img = models.URLField()
+   # lister = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="lister")
            
 def index(request):
     return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
@@ -79,9 +85,12 @@ def create_listing(request):
     if request.method == "POST":
         form = CreateListingForm(request.POST)
         if form.is_valid():
-
-            form.save()
-            return redirect("auctions/index.html")
+            post = form.save(commit=False)
+            post.sold = False
+            post.lister = request.user
+            post.date_created = datetime.now()
+            post.save()
+            return redirect("index")
             # if request.user.is_authenticated:
             #     name = request.user
             # item_name = form.cleaned_data["item_name"]
@@ -115,6 +124,6 @@ def filter_category(request, id):
     return render(request, "auctions/index.html", {"listing_category": listings_category})
 
 def watchlist(request):
-    items_to_show = Watchlist.objects.get(user = request.user) 
+    items_to_show = Watchlist.objects.get(user=request.user)
 
     return render(request, "auctions/watchlist.html", {"watchlist": items_to_show.listings.all()})

@@ -4,9 +4,21 @@
 <h2>Active Listings</h2>
 
 <article>
-    {% for l in Listings %}
-    {% if not l.sold %}
-    <section>{{l}}</section>
+    {% for l in listings %}
+    {% if l.sold == False %}
+    <section>
+        <a href="{% url 'listing' l.id %}">
+            <h4>{{ l.item_name }}</h4>  </a>
+            <p>Price: {{ l.price }}</p>
+            <p>Description: {{ l.description }}</p>
+            <p>{{ l.img }}</p>
+            {% if l.img %}
+            <div style="display:flex;justify-content:space-evenly;">
+                <img src="{{ l.url_img }}" width="200px">
+              </div>
+                {% endif %}
+    
+    </section>
     {% endif %}
     {% endfor %}
 </article>
