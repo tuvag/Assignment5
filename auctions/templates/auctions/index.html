@@ -6,7 +6,12 @@
 <article>
     {% for l in listings %}
     {% if l.sold == False %}
-    <section>
+    <div class="listingsgrid">
+
+        {% for m in message %}
+      <h2>{{m}}</h2>
+      {% endfor %}
+
         <a href="{% url 'listing' l.id %}">
             <h4>{{ l.item_name }}</h4>  </a>
             <p>Price: {{ l.price }}</p>
@@ -14,11 +19,11 @@
             <p>{{ l.img }}</p>
             {% if l.img %}
             <div style="display:flex;justify-content:space-evenly;">
-                <img src="{{ l.url_img }}" width="200px">
+                <img src="{{ l.img.url }}" width="200px">
               </div>
                 {% endif %}
     
-    </section>
+            </div>
     {% endif %}
     {% endfor %}
 </article>

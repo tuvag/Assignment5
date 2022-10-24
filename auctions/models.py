@@ -21,7 +21,6 @@ class Categories(models.Model):
 
 # auction listings
 class Listings(models.Model):
-    #place tables to database here
     item_name = models.CharField(max_length = 64)
     description = models.CharField(max_length= 256)
     price = models.IntegerField()
@@ -50,17 +49,13 @@ class Watchlist(models.Model):
         return f"{self.user}'s watchlist"
 
 # Bids
-# class bids(models.Model):
-#     bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
-#     bid = models.IntegerField()
-#     price = models.IntegerField()
-
-
-
-
+class bids(models.Model):
+     bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
+     bid = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="bids")
+     price = models.IntegerField()
 
 # Comments made on auction listings
 class Comments(models.Model):
     commenter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter")
     comment_reciever = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="listing")
-    comment = models.CharField(max_length= 256)
+    comment = models.TextField()

@@ -1,4 +1,6 @@
 from django.urls import path
+from django.conf.urls.static import static
+from django.conf import settings
 
 from . import views
 
@@ -11,8 +13,10 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path("create_listing", views.create_listing, name="create_listing"),
     path("watchlist", views.watchlist, name="watchlist"),
+    path("watchlist/<int:id>", views.save_to_watchlist, name="save_to_watchlist"),
     path("categories", views.categories, name="categories"),
     path("categories/<int:id>", views.filter_category, name="filter_category"),
     path("<int:id>", views.listing, name="listing"),
+    path("<int:id>/", views.comment_to_listing, name="comment_to_listing"),
 ]
-#urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

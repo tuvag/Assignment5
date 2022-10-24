@@ -1,5 +1,29 @@
 {% extends "auctions/layout.html" %}
 
 {% block main %}
+<h1>Active Listing</h1>
+
+<div class="active_listing">
+    
+    <h3>{{ listings.item_name }}</h3>
+    <img src="{{ listings.img.url }}">
+    <p>{{ listings.description }}</p>
+    <ul><strong>Current price: </strong> {{ listings.price }}</ul>
+    <ul><strong> Date posted: </strong> {{ listings.date_created }}</ul>
+
+    {% if user.is_authenticated %}
+    <a href="{% url 'save_to_watchlist' listings.id %}" class="watchlist_button">Add to Watch List</a>
+    {% endif %}
+
+    <br>
+    <br>
+    <form action="{% url 'comment_to_listing' listings.id %}" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Add comment">
+    </form>
+
+
+</div>
 
 {% endblock %}

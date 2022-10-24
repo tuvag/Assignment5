@@ -9,12 +9,17 @@ nav {
 body > header { 
   padding: 0 0.5rem .75rem 0.5rem;
   background-color: #3A9BDC;
+  color: whitesmoke;
 }
 
 body {
   grid-template-columns: 10% 80% 10%;
 }
 nav .a{
+  color: whitesmoke;
+}
+
+header .h1{
   color: whitesmoke;
 }
 
@@ -28,4 +33,25 @@ nav .a{
 
 .input{
   background-color: #3A9BDC;
+}
+
+.listingsgrid {
+  padding: 20px;
+  border-width: 1px;
+  border-style: solid;
+  margin: 5px;
+}
+
+.active_listing {
+  
+}
+
+.watchlist_button{
+  background-color: rgb(212, 113, 113);
+  padding: 15px 25px;
+  text-decoration: none;
+}
+
+.watchlist_button:hover{
+  background-color: #ae0606;
 }

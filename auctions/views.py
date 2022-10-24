@@ -7,6 +7,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django import forms
 from datetime import datetime
+from django.contrib import messages
 
 from .models import *
 
@@ -25,7 +26,13 @@ class CreateListingForm(forms.ModelForm):
     #buyer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="buyer")
    # url_img = models.URLField()
    # lister = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="lister")
-           
+
+class CommentForm(forms.Form):
+    comment = forms.Textarea()
+
+class BidsForm(forms.Form):
+    price = forms.IntegerField(label="price")
+
 def index(request):
     return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
 
@@ -82,14 +89,18 @@ def register(request):
         return render(request, "auctions/register.html")
 
 def create_listing(request):
+    msg = ""
     if request.method == "POST":
         form = CreateListingForm(request.POST)
         if form.is_valid():
             post = form.save(commit=False)
             post.sold = False
+            if not post.img:
+                msg = "Could not upload image"
             post.lister = request.user
             post.date_created = datetime.now()
             post.save()
+            messages.success(request, (f'\"{ post.item_name }\" was successfully added!'))
             return redirect("index")
             # if request.user.is_authenticated:
             #     name = request.user
@@ -108,12 +119,13 @@ def create_listing(request):
         # new_listing.save()
     else:
         form = CreateListingForm()
-        return render(request, "auctions/create_listing.html", {"form": form})
+        return render(request, "auctions/create_listing.html", {"form": form, "message": msg})
 
-def listing(request, listing_id):
-    listing = Listings.objects.get(pk=listing_id)
+def listing(request,id):
+    listing = Listings.objects.get(pk=id)
+    comments = Comments.objects.filter(comment_reciever = listing)
    
-    return render(request, "auctions/listing.html",{"listings":listing})
+    return render(request, "auctions/listing.html",{"listings":listing, "comments":comments})
 
 
 def categories(request):
@@ -121,9 +133,36 @@ def categories(request):
 
 def filter_category(request, id):
     listings_category = Listings.objects.filter(listing_category = id)
-    return render(request, "auctions/index.html", {"listing_category": listings_category})
+    return render(request, "auctions/index.html", {"listings": listings_category})
 
 def watchlist(request):
-    items_to_show = Watchlist.objects.get(user=request.user)
+    items_to_show = Watchlist.objects.get(user = request.user)
 
     return render(request, "auctions/watchlist.html", {"watchlist": items_to_show.listings.all()})
+
+def save_to_watchlist(request, id):
+    if request.user.is_authenticated: 
+        if Watchlist.objects.filter(user = request.user).exists():
+            watchlist = Watchlist.objects.get(user = request.user)
+        else: 
+            watchlist = Watchlist(user = request.user)
+        watchlist.save()
+        to_add = Listings.objects.get(id = id)
+        watchlist.listings.add(to_add)
+        watchlist.save()
+
+    return render(request, "auctions/watchlist.html", {"watchlist": watchlist.listings.all()})
+
+def comment_to_listing(request, id):
+    listing = Listings.objects.get(pk=id)
+    if request.user.is_authenticated and request.method == "POST":
+        form = CommentForm(request.POST) 
+        comment = form.data["comment"]
+        comment_to_save = Comments(commenter = request.user, comment_reciever = listing, comment = comment)
+        comment_to_save.save()
+        return redirect('listing', id = id)
+
+
+
+
+
