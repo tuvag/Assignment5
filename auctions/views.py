@@ -28,10 +28,14 @@ class CreateListingForm(forms.ModelForm):
    # lister = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="lister")
 
 class CommentForm(forms.Form):
-    comment = forms.Textarea()
+    price = forms.IntegerField(label="price")
+   #class Meta:
+   # model = Comments
+   # field = ['comment']
 
 class BidsForm(forms.Form):
     price = forms.IntegerField(label="price")
+
 
 def index(request):
     return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
@@ -162,7 +166,39 @@ def comment_to_listing(request, id):
         comment_to_save.save()
         return redirect('listing', id = id)
 
+def place_bid(request):
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            msg =""
+            form = BidsForm(request.POST)
+            new_bid = int(form.data["new_bid"])
+            id = form.data["id"]
+            l = Listings.objects.get(pk=id)
+            curr_price = l.price
 
+            if (curr_price < new_bid):
+                l.price = new_bid
+                l.save()
 
+                bid_data = Bids(price = new_bid, bid = l, bidder= request.user)
+                msg= f'Your bid was successful'
+            else:
+                msg=f'Your bid has to be above the current price'
 
+            return redirect('listing', id = id)
+        
 
+        # if form.is_valid():
+        #     l = Listings.objects.get(pk=request.listings.id)
+        #     if ()
+
+        # form.commenter = request.user
+        # form.comment_reciever = request.listings.id
+
+        # form.save()
+
+        else: 
+            msg = f'Log in to make a bid'
+            return index
+
+ 

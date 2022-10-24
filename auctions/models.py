@@ -49,7 +49,7 @@ class Watchlist(models.Model):
         return f"{self.user}'s watchlist"
 
 # Bids
-class bids(models.Model):
+class Bids(models.Model):
      bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="bidder")
      bid = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="bids")
      price = models.IntegerField()

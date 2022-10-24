@@ -19,8 +19,15 @@
     <br>
     <form action="{% url 'comment_to_listing' listings.id %}" method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{form.as_p}}
         <input type="submit" value="Add comment">
+    </form>
+    <form action="{% url 'place_bid' %}" method="POST">
+        {% csrf_token %}
+        <input type="hidden" name="id" value="{{listings.id}}">
+        <label for="new_bid">Make a bid: </label>
+        <input type="number" id="new_bid" name="new_bid">
+        <input type="submit" value="Place Bid">
     </form>
 
 

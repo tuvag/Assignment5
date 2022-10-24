@@ -47,11 +47,11 @@ header .h1{
 }
 
 .watchlist_button{
-  background-color: rgb(212, 113, 113);
+  background-color: rgb(118, 117, 117);
   padding: 15px 25px;
   text-decoration: none;
 }
 
 .watchlist_button:hover{
-  background-color: #ae0606;
+  background-color: #a4a4a4;
 }
