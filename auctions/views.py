@@ -1,3 +1,4 @@
+from queue import Empty
 from unicodedata import category
 from urllib import request
 from django.contrib.auth import authenticate, login, logout
@@ -137,6 +138,9 @@ def categories(request):
 
 def filter_category(request, id):
     listings_category = Listings.objects.filter(listing_category = id)
+    if listings_category is Empty: 
+        msg = f'There are no listings in this category.'
+        return (request, "auctions/index.html", {"listings": listings_category, "message":msg})
     return render(request, "auctions/index.html", {"listings": listings_category})
 
 def watchlist(request):

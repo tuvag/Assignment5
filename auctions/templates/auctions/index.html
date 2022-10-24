@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block main %}
-<h2>Active Listings</h2>
+<h1>Active Listings</h1>
 
 <article>
     {% for l in listings %}
@@ -14,8 +14,8 @@
 
         <a href="{% url 'listing' l.id %}">
             <h4>{{ l.item_name }}</h4>  </a>
-            <p>Price: {{ l.price }}</p>
-            <p>Description: {{ l.description }}</p>
+            <p><strong>Price: </strong>{{ l.price }}</p>
+            <p><strong>Description: </strong> {{ l.description }}</p>
             <p>{{ l.img }}</p>
             {% if l.img %}
             <div style="display:flex;justify-content:space-evenly;">

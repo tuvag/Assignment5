@@ -3,9 +3,10 @@
 
 {% block main %}
 <h1>Categories</h1>
-
+<div class="categories">
 {% for c in l_category %}
-   <ul><a href="{% url 'filter_category' c.id %}">{{ c.category }}</a></ul>
+   <a href="{% url 'filter_category' c.id %}"><button>{{ c.category }}</button></a>
 {% endfor %}
+</div>
 
 {% endblock %}

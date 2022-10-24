@@ -1,11 +1,22 @@
 {% extends "auctions/layout.html" %}
-<h1> My watchlist </h1>
+
 
 {% block main %}
+<h1> My watchlist </h1>
 
-{% for w in watchlist %}
-
+{% for listings in watchlist %}
+{% if listings.sold == False %}
+<div class="active_listing">
+<a href="{% url 'listing' listings.id %}"></a>
+<h3>{{listings.item_name}}</h3>
+    <img src="{{ listings.img.url }}" class="l_img">
+    <p>{{ listings.description }}</p>
+    <ul><strong>Current price: </strong> {{ listings.price }}</ul>
+    <ul><strong> Date posted: </strong> {{ listings.date_created }}</ul>
+</div>
+{% endif %}
 {% endfor %}
+
 
 
 {% endblock %}
