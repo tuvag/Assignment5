@@ -12,12 +12,15 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     path("create_listing", views.create_listing, name="create_listing"),
+    path("<int:id>/close_listing", views.close_listing, name="close_listing"),
     path("watchlist", views.watchlist, name="watchlist"),
     path("watchlist/<int:id>", views.save_to_watchlist, name="save_to_watchlist"),
+    path("remove_from_watchlist/<int:id>", views.remove_from_watchlist, name="remove_from_watchlist"),
     path("categories", views.categories, name="categories"),
     path("categories/<int:id>", views.filter_category, name="filter_category"),
     path("<int:id>", views.listing, name="listing"),
     path("<int:id>/", views.comment_to_listing, name="comment_to_listing"),
     path("place_bid", views.place_bid, name="place_bid"),
+
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

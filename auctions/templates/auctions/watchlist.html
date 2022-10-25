@@ -7,12 +7,13 @@
 {% for listings in watchlist %}
 {% if listings.sold == False %}
 <div class="active_listing">
-<a href="{% url 'listing' listings.id %}"></a>
-<h3>{{listings.item_name}}</h3>
+<a href="{% url 'listing' listings.id %}"><h3>{{listings.item_name}}</h3></a>
+
     <img src="{{ listings.img.url }}" class="l_img">
     <p>{{ listings.description }}</p>
     <ul><strong>Current price: </strong> {{ listings.price }}</ul>
     <ul><strong> Date posted: </strong> {{ listings.date_created }}</ul>
+    <a href="{% url 'remove_from_watchlist' listings.id %}"><button>Remove from Watch List</button></a>
 </div>
 {% endif %}
 {% endfor %}

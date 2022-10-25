@@ -54,6 +54,9 @@ class Bids(models.Model):
      bid = models.ForeignKey(Listings, on_delete=models.CASCADE, related_name="bids")
      price = models.IntegerField()
 
+     def __str__(self):
+        return f'{self.price}'
+
 # Comments made on auction listings
 class Comments(models.Model):
     commenter = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter")

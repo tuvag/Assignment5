@@ -5,6 +5,9 @@ nav {
   background-color: #3A9BDC;
   color: whitesmoke;
 }
+.span{
+  color: whitesmoke;
+}
 
 body > header { 
   padding: 0 0.5rem .75rem 0.5rem;
@@ -55,6 +58,7 @@ main > h1 {
 
 .l_img {
   width: 300px;
+  float: right;
 
 }
 
@@ -75,6 +79,15 @@ main > h1 {
 }
 
 .article{
-  border: 3px solid #3A9BDC;
+  border: none;
+  border-radius: 10px;
+}
+
+.commentgrid {
+  padding: 10px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #3A9BDC;
+  margin: 5px;
   border-radius: 10px;
 }
