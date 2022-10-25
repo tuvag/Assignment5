@@ -23,13 +23,14 @@ class CreateListingForm(forms.ModelForm):
     class Meta:
         model = Listings
         fields = ('item_name', 'price', 'listing_category', 'img', 'description')
+        labels = {'item_name': "Product", 'listing_category': "Category", 'img':"Picture:" }
 
     #buyer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="buyer")
    # url_img = models.URLField()
    # lister = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="lister")
 
 class CommentForm(forms.Form):
-    price = forms.IntegerField(label="price")
+    comment = forms.IntegerField(label="comment")
    #class Meta:
    # model = Comments
    # field = ['comment']
@@ -129,8 +130,26 @@ def create_listing(request):
 def listing(request,id):
     listing = Listings.objects.get(pk=id)
     comments = Comments.objects.filter(comment_reciever = listing)
+
+    if listing.sold == True:
+        return redirect('close_listing', id = id)
    
     return render(request, "auctions/listing.html",{"listings":listing, "comments":comments})
+
+def close_listing(request, id):
+    listing = Listings.objects.get(pk = id)
+    listing_bids = Bids.objects.filter(bid = listing)
+    sales_price = listing_bids.order_by('-price').first()
+    buyer = User
+
+    for b in listing_bids:
+        if b.price == sales_price.price:
+            buyer = b.bidder
+            listing.buyer = buyer
+            listing.sold = True
+            listing.save()
+
+    return render(request, "auctions/close_listing.html", {"sales_price": sales_price, "buyer": buyer})
 
 
 def categories(request):
@@ -161,6 +180,14 @@ def save_to_watchlist(request, id):
 
     return render(request, "auctions/watchlist.html", {"watchlist": watchlist.listings.all()})
 
+def remove_from_watchlist(request, id):
+    if request.user.is_authenticated:
+        remove = Listings.objects.get(id=id)
+        w_list = Watchlist.objects.get(user=request.user)
+        updated_watchlist = w_list.listings.remove(remove)
+    return redirect('watchlist')
+
+
 def comment_to_listing(request, id):
     listing = Listings.objects.get(pk=id)
     if request.user.is_authenticated and request.method == "POST":
@@ -185,6 +212,7 @@ def place_bid(request):
                 l.save()
 
                 bid_data = Bids(price = new_bid, bid = l, bidder= request.user)
+                bid_data.save()
                 msg= f'Your bid was successful'
             else:
                 msg=f'Your bid has to be above the current price'
