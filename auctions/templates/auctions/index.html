@@ -12,16 +12,16 @@
       <h2>{{m}}</h2>
       {% endfor %}
       {% if l.img %}
-      <div style="display:flex;justify-content:space-evenly;" class="l_img">
-          <img src="{{ l.img.url }}" width="200px">
+      <div class="l_img">
+          <img src="{{ l.img.url }}">
         </div>
+        
           {% endif %}
         <a href="{% url 'listing' l.id %}">
             <h4>{{ l.item_name }}</h4>  </a>
             
             <p><strong>Price: </strong>{{ l.price }}</p>
             <p><strong>Description: </strong> {{ l.description }}</p>
-           
     
             </div>
     {% endif %}

@@ -46,6 +46,7 @@ main > h1 {
   border-color: #3A9BDC;
   margin: 5px;
   border-radius: 10px;
+  overflow: auto;
 }
 
 .active_listing, .create_listing{
@@ -54,11 +55,13 @@ main > h1 {
   border: 3px solid #3A9BDC;
   padding: 30px;
   border-radius: 10px;
+  overflow: auto;
 }
 
 .l_img {
   width: 300px;
   float: right;
+  overflow: auto;
 
 }
 
@@ -90,4 +93,14 @@ main > h1 {
   border-color: #3A9BDC;
   margin: 5px;
   border-radius: 10px;
+}
+
+.success { 
+  color:rgb(9, 165, 9);
+  text-align: center;
+}
+
+.errorlist, .error {
+  color: rgb(211, 40, 40);
+  text-align: center;
 }

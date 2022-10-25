@@ -4,6 +4,10 @@
 {% block main %}
 <h1> My watchlist </h1>
 
+{% for m in messages %}
+      <h4 class="{{m.tags}}">{{m}}</h4>
+{% endfor %}
+{% if user.is_authenticated %}
 {% for listings in watchlist %}
 {% if listings.sold == False %}
 <div class="active_listing">
@@ -12,11 +16,12 @@
     <img src="{{ listings.img.url }}" class="l_img">
     <p>{{ listings.description }}</p>
     <ul><strong>Current price: </strong> {{ listings.price }}</ul>
-    <ul><strong> Date posted: </strong> {{ listings.date_created }}</ul>
+    <ul><strong>Date posted: </strong> {{ listings.date_created }}</ul>
     <a href="{% url 'remove_from_watchlist' listings.id %}"><button>Remove from Watch List</button></a>
 </div>
 {% endif %}
 {% endfor %}
+{% endif %}
 
 
 

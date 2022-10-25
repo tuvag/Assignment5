@@ -6,38 +6,11 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django import forms
 from datetime import datetime
 from django.contrib import messages
+from .forms import *
 
 from .models import *
-
-""" class CreateListingForm(forms.Form):
-    item_name = forms.CharField(label ="item_name")
-    item_price = forms.IntegerField(label="item_price")
-    category = forms.CharField(label="l_category")
-    description = forms.CharField(label= "description") """
-
-class CreateListingForm(forms.ModelForm):
-
-    class Meta:
-        model = Listings
-        fields = ('item_name', 'price', 'listing_category', 'img', 'description')
-        labels = {'item_name': "Product", 'listing_category': "Category", 'img':"Picture:" }
-
-    #buyer = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="buyer")
-   # url_img = models.URLField()
-   # lister = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, related_name="lister")
-
-class CommentForm(forms.Form):
-    comment = forms.IntegerField(label="comment")
-   #class Meta:
-   # model = Comments
-   # field = ['comment']
-
-class BidsForm(forms.Form):
-    price = forms.IntegerField(label="price")
-
 
 def index(request):
     return render(request, "auctions/index.html", {"listings": Listings.objects.all()})
@@ -94,10 +67,11 @@ def register(request):
     else:
         return render(request, "auctions/register.html")
 
+# create a listing
 def create_listing(request):
     msg = ""
     if request.method == "POST":
-        form = CreateListingForm(request.POST)
+        form = CreateListingForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.sold = False
@@ -108,25 +82,15 @@ def create_listing(request):
             post.save()
             messages.success(request, (f'\"{ post.item_name }\" was successfully added!'))
             return redirect("index")
-            # if request.user.is_authenticated:
-            #     name = request.user
-            # item_name = form.cleaned_data["item_name"]
-            # price = form.cleaned_data["item_price"]
-            # category = form.cleaned_data["l_category"]
-            # description = form.cleaned_data["description"]
-            # date_created = datetime.now()
-            # picture goes here
+            
         else:
             msg = "Invalid entry. Please try again."
             return render(request,"auctions/create.html", {"form": form, "message": msg})
-        #add photo to listing
-        # new_listing = Listings(name=name, item_name=item_name, description=description, price=price, date_created=date_created, category=l_category)
-
-        # new_listing.save()
     else:
         form = CreateListingForm()
         return render(request, "auctions/create_listing.html", {"form": form, "message": msg})
 
+#display a particular listing
 def listing(request,id):
     listing = Listings.objects.get(pk=id)
     comments = Comments.objects.filter(comment_reciever = listing)
@@ -136,6 +100,7 @@ def listing(request,id):
    
     return render(request, "auctions/listing.html",{"listings":listing, "comments":comments})
 
+#end a particular listing that you have created
 def close_listing(request, id):
     listing = Listings.objects.get(pk = id)
     listing_bids = Bids.objects.filter(bid = listing)
@@ -148,13 +113,13 @@ def close_listing(request, id):
             listing.buyer = buyer
             listing.sold = True
             listing.save()
-
     return render(request, "auctions/close_listing.html", {"sales_price": sales_price, "buyer": buyer})
 
-
+# showing all categories
 def categories(request):
     return render(request, "auctions/categories.html", {"l_category": Categories.objects.all()})
 
+#choose a particular category
 def filter_category(request, id):
     listings_category = Listings.objects.filter(listing_category = id)
     if listings_category is Empty: 
@@ -162,10 +127,15 @@ def filter_category(request, id):
         return (request, "auctions/index.html", {"listings": listings_category, "message":msg})
     return render(request, "auctions/index.html", {"listings": listings_category})
 
+# a users saved listings
 def watchlist(request):
-    items_to_show = Watchlist.objects.get(user = request.user)
-
-    return render(request, "auctions/watchlist.html", {"watchlist": items_to_show.listings.all()})
+    try:
+        items_to_show = Watchlist.objects.get(user = request.user)
+        return render(request, "auctions/watchlist.html", {"watchlist": items_to_show.listings.all()})
+    except:
+        messages.error(request, (f'Log in to view your watchlist'))
+        return render(request, "auctions/watchlist.html", {"watchlist": None})
+    
 
 def save_to_watchlist(request, id):
     if request.user.is_authenticated: 
@@ -177,6 +147,7 @@ def save_to_watchlist(request, id):
         to_add = Listings.objects.get(id = id)
         watchlist.listings.add(to_add)
         watchlist.save()
+
 
     return render(request, "auctions/watchlist.html", {"watchlist": watchlist.listings.all()})
 
@@ -213,24 +184,16 @@ def place_bid(request):
 
                 bid_data = Bids(price = new_bid, bid = l, bidder= request.user)
                 bid_data.save()
-                msg= f'Your bid was successful'
+                messages.success(request,(f'Your bid was successful'))
             else:
-                msg=f'Your bid has to be above the current price'
+                messages.error(request,(f'Your bid has to be above the current price'))
 
             return redirect('listing', id = id)
         
-
-        # if form.is_valid():
-        #     l = Listings.objects.get(pk=request.listings.id)
-        #     if ()
-
-        # form.commenter = request.user
-        # form.comment_reciever = request.listings.id
-
-        # form.save()
-
-        else: 
-            msg = f'Log in to make a bid'
-            return index
+    else: 
+        form = BidsForm(request.POST)
+        id = form.data["id"]
+        messages.error(request, (f'Log in to make a bid')) 
+        return redirect('listing', id = id)
 
  
