@@ -13,4 +13,4 @@ class CommentForm(forms.Form):
     comment = forms.IntegerField(label="comment")
 
 class BidsForm(forms.Form):
-    price = forms.IntegerField(label="price")
+    new_bid = forms.IntegerField(label="price", required=False)

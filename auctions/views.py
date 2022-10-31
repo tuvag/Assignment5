@@ -4,7 +4,7 @@ from urllib import request
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from datetime import datetime
 from django.contrib import messages
@@ -101,19 +101,35 @@ def listing(request,id):
     return render(request, "auctions/listing.html",{"listings":listing, "comments":comments})
 
 #end a particular listing that you have created
-def close_listing(request, id):
+def OLDclose_listing(request, id):
     listing = Listings.objects.get(pk = id)
     listing_bids = Bids.objects.filter(bid = listing)
+    # begtter name is "winning_bid"
     sales_price = listing_bids.order_by('-price').first()
-    buyer = User
+    buyer = User # stale code?
 
+    # isn't the "b" you are looking for already the 
+    # value of variable saels_price? 
     for b in listing_bids:
         if b.price == sales_price.price:
             buyer = b.bidder
             listing.buyer = buyer
             listing.sold = True
             listing.save()
+    # if you do a render, then the resulting page looks fine, but refresh it and you get "form resubmission?" popup
     return render(request, "auctions/close_listing.html", {"sales_price": sales_price, "buyer": buyer})
+
+def close_listing(request, id):
+    listing = get_object_or_404(Listings, pk=id)
+    winning_bid = Bids.objects.filter(bid = listing).order_by('-price').first()
+    if request.method == "POST":
+        listing.buyer = winning_bid.bidder
+        listing.sold = True
+        listing.save()
+        return redirect('closed_listing', id=id)
+    else:
+        return render(request, "auctions/close_listing.html", {"sales_price": winning_bid.price, "buyer": winning_bid.bidder})
+
 
 # showing all categories
 def categories(request):
@@ -122,9 +138,13 @@ def categories(request):
 #choose a particular category
 def filter_category(request, id):
     listings_category = Listings.objects.filter(listing_category = id)
+    # you could pass the empty list to the template (i.e., delete teh following 3 lines), 
+    # and use the template's {% empty %} feature. 
     if listings_category is Empty: 
         msg = f'There are no listings in this category.'
         return (request, "auctions/index.html", {"listings": listings_category, "message":msg})
+    # it would be nice to pass into the template the string: "Active Listings for FOO";
+    # otherwise, when viewing the page, you don't know that you have filtered by category FOO
     return render(request, "auctions/index.html", {"listings": listings_category})
 
 # a users saved listings
@@ -174,7 +194,10 @@ def place_bid(request):
             msg =""
             form = BidsForm(request.POST)
             new_bid = int(form.data["new_bid"])
-            id = form.data["id"]
+            # beteer as: 
+            # if form.is_valid():
+            #    new_bid = form.cleaned_data["new_bid"]
+            #    ...
             l = Listings.objects.get(pk=id)
             curr_price = l.price
 

@@ -21,7 +21,10 @@
     {% endif %}
 
     {% if user == listings.lister %}
-    <a href="{% url 'close_listing' listings.id %}"><button>Close Listing</button></a>
+        <form action="{% url 'close_listing' listings.id %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" value="Close Listing">
+        </form>
     {% endif %}
 
     <br>
