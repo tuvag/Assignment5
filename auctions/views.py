@@ -3,7 +3,7 @@ from unicodedata import category
 from urllib import request
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from datetime import datetime
@@ -148,8 +148,23 @@ def save_to_watchlist(request, id):
         watchlist.listings.add(to_add)
         watchlist.save()
 
-
     return render(request, "auctions/watchlist.html", {"watchlist": watchlist.listings.all()})
+
+def api_save_to_watchlist(request, id):
+    if request.user.is_authenticated: 
+        if Watchlist.objects.filter(user = request.user).exists():
+            watchlist = Watchlist.objects.get(user = request.user)
+            newstate = "unfavorite"
+        else: 
+            watchlist = Watchlist(user = request.user)
+            newstate = "favorite"
+        watchlist.save()
+        to_add = Listings.objects.get(id = id)
+        watchlist.listings.add(to_add)
+        watchlist.save()
+        print("Inside api_save_to_watchlist, and curr_value is: ", newstate)
+
+    return JsonResponse({'curr_value' : newstate})
 
 def remove_from_watchlist(request, id):
     if request.user.is_authenticated:

@@ -11,7 +11,9 @@
 {% for listings in watchlist %}
 {% if listings.sold == False %}
 <div class="active_listing">
-<a href="{% url 'listing' listings.id %}"><h3>{{listings.item_name}}</h3></a>
+    <img src="media/images/unfavorite.png" class="fav_image">
+
+    <a href="{% url 'listing' listings.id %}"><h3>{{listings.item_name}}</h3></a>
 
     <img src="{{ listings.img.url }}" class="l_img">
     <p>{{ listings.description }}</p>

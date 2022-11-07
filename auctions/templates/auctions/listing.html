@@ -7,10 +7,13 @@
       <h4 class="{{m.tags}}">{{m}}</h4>
       {% endfor %}
 <div class="active_listing">
-    
-    <h3>{{ listings.item_name }}</h3>
+    <!-- <button class="test" onclick="testing_button()">Test</button> -->
+ 
+    <!-- listing.id is passed in wrong here, working on a way to pass it into the function through the onclick -->
+    <img src="media/images/unfavorite.png" class="fav_image" onclick='watchlist_toggle(" + listings.id + ")'>
+    <h3>{{ listings.item_name }}</h3> 
     {% if listings.img %}
-    <img src="{{ listings.img.url }}" class="l_img">
+    <img src="{{ listings.img.url }}" id="l_img" class="l_img">
     {% endif %}
     <p>{{ listings.description }}</p>
     <ul><strong>Current price: </strong> {{ listings.price }}</ul>
@@ -49,5 +52,39 @@
 
 
 </div>
+<script>
+   
+    /* document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.fav_image').onclick = function () {
+        const lid = fav_img.lid 
+        fetch(`/api_save_to_watchlist/${lid}`)
+        .then(response => response.json())
+        .then(data => {console.log(data);
+        update_icon(data)})}}) */
 
+        
+    /* document.addEventListener('DOMContentLoaded', watchlist_toggle)
+    function testing_button() {
+        alert(`Waddup Fella??`)
+    } */
+
+
+    function watchlist_toggle(listing_id) {
+        // wrong listing ID
+        alert(`Const lid is: ${listing_id}`)
+        fetch(`/api_save_to_watchlist/${listing_id}`)
+        .then(response => response.json()
+        .then(data => {
+            console.log(data);
+            update_icon(data);
+        }))}
+        
+
+    function update_icon(data){
+        // filename = "media/images/favorite.png"
+        newstate = this.responseData["curr_value"];
+        filename = `media/images/${newstate}.png`;
+        document.querySelector('.fav_image').src = filename
+    }
+ </script>
 {% endblock %}
