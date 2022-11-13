@@ -138,11 +138,13 @@ def watchlist(request):
     
 
 def save_to_watchlist(request, id):
-    if request.user.is_authenticated: 
+    if request.user.is_authenticated(): 
         if Watchlist.objects.filter(user = request.user).exists():
             watchlist = Watchlist.objects.get(user = request.user)
         else: 
             watchlist = Watchlist(user = request.user)
+        cnt = Watchlist.objects.filter(watchlist_user=request.user).count()
+        print("This is how many items is in the watchlist: ", cnt)
         watchlist.save()
         to_add = Listings.objects.get(id = id)
         watchlist.listings.add(to_add)
@@ -151,18 +153,7 @@ def save_to_watchlist(request, id):
     return render(request, "auctions/watchlist.html", {"watchlist": watchlist.listings.all()})
 
 def api_save_to_watchlist(request, id):
-    if request.user.is_authenticated: 
-        if Watchlist.objects.filter(user = request.user).exists():
-            watchlist = Watchlist.objects.get(user = request.user)
-            newstate = "unfavorite"
-        else: 
-            watchlist = Watchlist(user = request.user)
-            newstate = "favorite"
-        watchlist.save()
-        to_add = Listings.objects.get(id = id)
-        watchlist.listings.add(to_add)
-        watchlist.save()
-        print("Inside api_save_to_watchlist, and curr_value is: ", newstate)
+    pass
 
     return JsonResponse({'curr_value' : newstate})
 

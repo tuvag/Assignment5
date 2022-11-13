@@ -7,10 +7,10 @@
       <h4 class="{{m.tags}}">{{m}}</h4>
       {% endfor %}
 <div class="active_listing">
-    <!-- <button class="test" onclick="testing_button()">Test</button> -->
- 
-    <!-- listing.id is passed in wrong here, working on a way to pass it into the function through the onclick -->
-    <img src="media/images/unfavorite.png" class="fav_image" onclick='watchlist_toggle(" + listings.id + ")'>
+
+    {% if user.is_authenticated %}
+        <img src="media/images/unfavorite.png" class="fav_image" onclick='watchlist_toggle("{{listings.id}}")'>
+    {% endif %}
     <h3>{{ listings.item_name }}</h3> 
     {% if listings.img %}
     <img src="{{ listings.img.url }}" id="l_img" class="l_img">
@@ -70,21 +70,24 @@
 
 
     function watchlist_toggle(listing_id) {
-        // wrong listing ID
-        alert(`Const lid is: ${listing_id}`)
-        fetch(`/api_save_to_watchlist/${listing_id}`)
-        .then(response => response.json()
+        fetch(`api_save_to_watchlist/${listing_id}`)
+        .then((response) => {
+      return response.json();
+            })
         .then(data => {
             console.log(data);
             update_icon(data);
-        }))}
+        })}
         
 
     function update_icon(data){
-        // filename = "media/images/favorite.png"
-        newstate = this.responseData["curr_value"];
+        newstate = data.curr_value;
+        alert(`This is the current value of the state: ${newstate}`)
+        
         filename = `media/images/${newstate}.png`;
         document.querySelector('.fav_image').src = filename
     }
+
+
  </script>
 {% endblock %}
