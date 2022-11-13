@@ -158,6 +158,8 @@ def api_save_to_watchlist(request, id):
         else: 
             watchlist = Watchlist(user = request.user)
             newstate = "favorite"
+        cnt = Watchlist.objects.filter(user=request.user).count()
+        print("This is how many items is in the watchlist: ", cnt)
         watchlist.save()
         to_add = Listings.objects.get(id = id)
         watchlist.listings.add(to_add)
@@ -165,6 +167,16 @@ def api_save_to_watchlist(request, id):
         print("Inside api_save_to_watchlist, and curr_value is: ", newstate)
 
     return JsonResponse({'curr_value' : newstate})
+
+def api_listing_toatals(request):
+    watchlisted = Watchlist.objects.filter(user=request.user).count()
+    active_listings = Listings.objects.all().count()
+    totals = {
+        'total_watchlisted' : watchlisted, 
+        'total_active_listings' : active_listings
+    }
+    return JsonResponse(totals)
+
 
 def remove_from_watchlist(request, id):
     if request.user.is_authenticated:

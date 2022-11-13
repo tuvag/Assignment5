@@ -8,18 +8,16 @@
         <title>{% block title %}Auctions{% endblock %}</title>
         <link rel="stylesheet" href="https://cdn.simplecss.org/simple.css">
         <link rel="stylesheet" href="{% static 'auctions/uaa490styles.css' %}" >
-        <link rel="stylesheet" href="auctions/static/node_modules/basiclightbox/dist/basicLightbox.min.css">
-        <!-- <link rel="stylesheet" href="{% static 'auctions/node_modules/basiclightbox/dist/basicLightbox.min.css' %}"> -->
-        <!-- <link rel="stylesheet" href="https://github.com/electerious/basicLightbox/blob/master/dist/basicLightbox.min.css"> -->
+        <link rel="stylesheet" href="{% static 'auctions/node_modules/basiclightbox/dist/basicLightbox.min.css' %}"> 
     </head>
     <body>
         <header>
             <h1>Auctions "R" Us</h1>
             <nav>
                 <span>
-                    <a href="{% url 'index' %}">Active Listings</a>
+                    <a href="{% url 'index' %}">Active Listings <span id="active_listings"></span></a>
                     <a href="{% url 'categories' %}">Categories</a>
-                    <a href="{% url 'watchlist' %}">Watchlist</a>
+                    <a href="{% url 'watchlist' %}">Watchlist <span id="total_watchlisted"></span></a>
                     <a href="{% url 'create_listing' %}">Create Listing</a>
                 </span>
                 <span>
@@ -34,21 +32,20 @@
             </nav>
         </header>
         <main>
-            <!-- Test function for lightbox -- does not seem to find module, tried static and relative path -->
-            <button class="ja">Yooo</button>
             {% block main %}
             {% endblock %}
         </main>
-       <!-- <script src="{% static 'auctions/node_modules/basiclightbox/dist/basicLightbox.min.js' %}"> -->
-        <!-- <script src="https://github.com/electerious/basicLightbox/blob/master/dist/basicLightbox.min.js"> -->
-        <script src="auctions/static/node_modules/basiclightbox/dist/basicLightbox.min.js">
+        <script src="{% static 'auctions/node_modules/basiclightbox/dist/basicLightbox.min.js' %}"></script>
+        <script src="{% static 'auctions/script.js' %}"></script> 
+        <script>
             const imageInstance = document.createElement('div')
             const image_to_show = document.createElement('img')
-            // test image for now
-            image_to_show.src = "https://picsum.photos/1200/600"
+            image_to_show.src = `${this.l_img.src}`
             imageInstance.appendChild(image_to_show)
             const instance = basicLightbox.create(imageInstance)
-            document.querySelector('button.ja').onclick = instance.show
+            document.querySelector('img.l_img').onclick = instance.show
+
         </script>
+
     </body>
 </html>

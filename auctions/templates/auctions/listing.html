@@ -1,60 +1,67 @@
-{% extends "auctions/layout.html" %}
-
-{% block main %}
+{% extends "auctions/layout.html" %} {% block main %}
 <h1>Active Listing</h1>
 
 {% for m in messages %}
-      <h4 class="{{m.tags}}">{{m}}</h4>
-      {% endfor %}
+<h4 class="{{m.tags}}">{{m}}</h4>
+{% endfor %}
 <div class="active_listing">
-    <!-- <button class="test" onclick="testing_button()">Test</button> -->
- 
-    <!-- listing.id is passed in wrong here, working on a way to pass it into the function through the onclick -->
-    <img src="media/images/unfavorite.png" class="fav_image" onclick='watchlist_toggle(" + listings.id + ")'>
-    <h3>{{ listings.item_name }}</h3> 
-    {% if listings.img %}
-    <img src="{{ listings.img.url }}" id="l_img" class="l_img">
-    {% endif %}
-    <p>{{ listings.description }}</p>
-    <ul><strong>Current price: </strong> {{ listings.price }}</ul>
-    <ul><strong> Date posted: </strong> {{ listings.date_created }}</ul>
+  <!-- <button class="test" onclick="testing_button()">Test</button> -->
 
-    {% if user.is_authenticated %}
-    <a href="{% url 'save_to_watchlist' listings.id %}"><button>Add to Watch List</button></a>
-    {% endif %}
+  <!-- listing.id is passed in wrong here, working on a way to pass it into the function through the onclick -->
+  <img
+    src="media/images/unfavorite.png"
+    class="fav_image"
+    onclick='watchlist_toggle("{{listings.id}}")' />
+  <h3>{{ listings.item_name }}</h3>
+  {% if listings.img %}
+  <img src="{{ listings.img.url }}" id="l_img" class="l_img" />
+  {% endif %}
+  <p>{{ listings.description }}</p>
+  <ul>
+    <strong>Current price: </strong>
+    {{ listings.price }}
+  </ul>
+  <ul>
+    <strong> Date posted: </strong>
+    {{ listings.date_created }}
+  </ul>
 
-    {% if user == listings.lister %}
-    <a href="{% url 'close_listing' listings.id %}"><button>Close Listing</button></a>
-    {% endif %}
+  {% if user.is_authenticated %}
+  <a href="{% url 'save_to_watchlist' listings.id %}"
+    ><button>Add to Watch List</button></a
+  >
+  {% endif %} {% if user == listings.lister %}
+  <a href="{% url 'close_listing' listings.id %}"
+    ><button>Close Listing</button></a
+  >
+  {% endif %}
 
-    <br>
-    <br>
-    <form action="{% url 'place_bid' %}" method="POST">
-        {% csrf_token %}
-        <input type="hidden" name="id" value="{{listings.id}}">
-        <label for="new_bid">Make a bid: </label>
-        <input type="number" id="new_bid" name="new_bid">
-        <input type="submit" value="Place Bid">
-    </form>
-    
-    {% if comments %}
-    {% for c in comments %}
-    <ul class="commentgrid"> <strong>@{{c.commenter}}</strong> {{c.comment}}</ul>
-    {% endfor%}
-    {% endif %}
-    <form action="{% url 'comment_to_listing' listings.id %}" method="POST">
-        {% csrf_token %}
-        <label for="comment">Comment: </label>
-        <input type="text" id="comment" name="comment">
-        <input type="submit" value="Add comment">
-    </form>
-   
+  <br />
+  <br />
+  <form action="{% url 'place_bid' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="id" value="{{listings.id}}" />
+    <label for="new_bid">Make a bid: </label>
+    <input type="number" id="new_bid" name="new_bid" />
+    <input type="submit" value="Place Bid" />
+  </form>
 
-
+  {% if comments %} {% for c in comments %}
+  <ul class="commentgrid">
+    <strong>@{{c.commenter}}</strong>
+    {{c.comment}}
+  </ul>
+  {% endfor%} {% endif %}
+  <form action="{% url 'comment_to_listing' listings.id %}" method="POST">
+    {% csrf_token %}
+    <label for="comment">Comment: </label>
+    <input type="text" id="comment" name="comment" />
+    <input type="submit" value="Add comment" />
+  </form>
 </div>
+
 <script>
-   
-    /* document.addEventListener('DOMContentLoaded', function() {
+  /* document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.fav_image').onclick = function () {
         const lid = fav_img.lid 
         fetch(`/api_save_to_watchlist/${lid}`)
@@ -62,29 +69,27 @@
         .then(data => {console.log(data);
         update_icon(data)})}}) */
 
-        
-    /* document.addEventListener('DOMContentLoaded', watchlist_toggle)
+  /* document.addEventListener('DOMContentLoaded', watchlist_toggle)
     function testing_button() {
         alert(`Waddup Fella??`)
     } */
 
+  function watchlist_toggle(listing_id) {
+    fetch(`api_save_to_watchlist/${listing_id}`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        update_icon(data);
+      });
+  }
 
-    function watchlist_toggle(listing_id) {
-        // wrong listing ID
-        alert(`Const lid is: ${listing_id}`)
-        fetch(`/api_save_to_watchlist/${listing_id}`)
-        .then(response => response.json()
-        .then(data => {
-            console.log(data);
-            update_icon(data);
-        }))}
-        
-
-    function update_icon(data){
-        // filename = "media/images/favorite.png"
-        newstate = this.responseData["curr_value"];
-        filename = `media/images/${newstate}.png`;
-        document.querySelector('.fav_image').src = filename
-    }
- </script>
+  function update_icon(data) {
+    newstate = data.curr_value;
+    alert(`This is the current value of the state: ${newstate}`);
+    filename = `media/images/${newstate}.png`;
+    document.querySelector(".fav_image").src = filename;
+  }
+</script>
 {% endblock %}
