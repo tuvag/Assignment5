@@ -138,11 +138,13 @@ def watchlist(request):
     
 
 def save_to_watchlist(request, id):
-    if request.user.is_authenticated: 
+    if request.user.is_authenticated(): 
         if Watchlist.objects.filter(user = request.user).exists():
             watchlist = Watchlist.objects.get(user = request.user)
         else: 
             watchlist = Watchlist(user = request.user)
+        cnt = Watchlist.objects.filter(watchlist_user=request.user).count()
+        print("This is how many items is in the watchlist: ", cnt)
         watchlist.save()
         to_add = Listings.objects.get(id = id)
         watchlist.listings.add(to_add)
@@ -165,6 +167,25 @@ def api_save_to_watchlist(request, id):
         watchlist.listings.add(to_add)
         watchlist.save()
         print("Inside api_save_to_watchlist, and curr_value is: ", newstate)
+
+<<<<<<< HEAD
+    if request.user.is_authenticated: 
+        if Watchlist.objects.filter(user = request.user).exists():
+            watchlist = Watchlist.objects.get(user = request.user)
+            newstate = "unfavorite"
+        else: 
+            watchlist = Watchlist(user = request.user)
+            newstate = "favorite"
+        cnt = Watchlist.objects.filter(user=request.user).count()
+        print("This is how many items is in the watchlist: ", cnt)
+        watchlist.save()
+        to_add = Listings.objects.get(id = id)
+        watchlist.listings.add(to_add)
+        watchlist.save()
+        print("Inside api_save_to_watchlist, and curr_value is: ", newstate)
+=======
+    pass
+>>>>>>> 073e75ff6b820a0828a1c1e11159a12072e7e525
 
     return JsonResponse({'curr_value' : newstate})
 
