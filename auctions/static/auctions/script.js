@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     update_totals();
-    setInterval(update_totals, 3000);
+    setInterval(update_totals, 10000);
 });
 
 function update_totals() {

@@ -138,29 +138,32 @@ def watchlist(request):
     
 
 def save_to_watchlist(request, id):
-    if request.user.is_authenticated(): 
-        if Watchlist.objects.filter(user = request.user).exists():
-            watchlist = Watchlist.objects.get(user = request.user)
+    if request.user.is_authenticated: 
+        item = Listings.objects.get(id=id)
+        if Watchlist.objects.filter(user = request.user, listings = item).exists():
+            watchlist = Watchlist.objects.get(user = request.user, listings = item)
         else: 
             watchlist = Watchlist(user = request.user)
-        cnt = Watchlist.objects.filter(watchlist_user=request.user).count()
+            watchlist.listings.add(item)
+            watchlist.save()
+        cnt = Watchlist.objects.filter(user=request.user, id = id)
         print("This is how many items is in the watchlist: ", cnt)
-        watchlist.save()
-        to_add = Listings.objects.get(id = id)
-        watchlist.listings.add(to_add)
-        watchlist.save()
 
     return render(request, "auctions/watchlist.html", {"watchlist": watchlist.listings.all()})
 
 def api_save_to_watchlist(request, id):
     if request.user.is_authenticated: 
-        if Watchlist.objects.filter(user = request.user).exists():
-            watchlist = Watchlist.objects.get(user = request.user)
+        item = Listings.objects.get(id=id)
+        if Watchlist.objects.filter(user = request.user,listings = item).exists():
+            #watchlist = Watchlist.objects.get(user = request.user, id=id)
+            watchlist = Watchlist.objects.filter(user = request.user,listings = item)
+            watchlist.delete()
             newstate = "unfavorite"
         else: 
             watchlist = Watchlist(user = request.user)
             newstate = "favorite"
-        cnt = Watchlist.objects.filter(user=request.user).count()
+
+        cnt = Watchlist.objects.filter(user = request.user)
         print("This is how many items is in the watchlist: ", cnt)
         watchlist.save()
         to_add = Listings.objects.get(id = id)
@@ -182,9 +185,10 @@ def api_listing_toatals(request):
 
 def remove_from_watchlist(request, id):
     if request.user.is_authenticated:
-        remove = Listings.objects.get(id=id)
-        w_list = Watchlist.objects.get(user=request.user)
-        updated_watchlist = w_list.listings.remove(remove)
+        item = Listings.objects.get(id=id)
+        w_list = Watchlist.objects.get(user=request.user, listings = item) 
+        #updated_watchlist = w_list.listings.remove(Watchlist.objects.get(user=request.user, listings = remove) )
+        w_list.delete()
     return redirect('watchlist')
 
 
