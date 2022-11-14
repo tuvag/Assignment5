@@ -148,7 +148,7 @@ def save_to_watchlist(request, id):
             watchlist.save()
             messages.success(request, (f'This item was sucessfully added to your watchlist'))
 
-    return render(request, "auctions/watchlist.html", {"watchlist": Watchlist.objects.filter(user=request.user).all()})
+    return render(request, "auctions/watchlist.html", {"watchlist": Watchlist.objects.filter(user=request.user)})
 
 def api_save_to_watchlist(request, id):
     if request.user.is_authenticated: 
