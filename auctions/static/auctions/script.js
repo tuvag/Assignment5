@@ -1,6 +1,7 @@
+
 document.addEventListener('DOMContentLoaded', function() {
     update_totals();
-    setInterval(update_totals, 10000);
+    setInterval(update_totals, 3000);
 });
 
 function update_totals() {
@@ -14,4 +15,3 @@ function update_totals() {
         console.log('There is an error with updating counters', error);
     });
 }
-

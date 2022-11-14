@@ -97,8 +97,13 @@ def listing(request,id):
 
     if listing.sold == True:
         return redirect('close_listing', id = id)
+
+    if Watchlist.objects.filter(user = request.user,listings = listing).exists():
+        curr_state = "favorite"
+    else:
+        curr_state = "unfavorite"
    
-    return render(request, "auctions/listing.html",{"listings":listing, "comments":comments})
+    return render(request, "auctions/listing.html",{"listings":listing, "comments":comments, "state": curr_state})
 
 #end a particular listing that you have created
 def close_listing(request, id):
@@ -130,8 +135,15 @@ def filter_category(request, id):
 # a users saved listings
 def watchlist(request):
     try:
-        items_to_show = Watchlist.objects.filter(user = request.user)
-        return render(request, "auctions/watchlist.html", {"watchlist": items_to_show})
+        user_watchlist = []
+        items_to_show = Watchlist.objects.filter(user = request.user).listings
+        print("Watchlist.objects.filter(user = request.user) is", items_to_show)
+        print("items_to_show.first() is ", items_to_show.first().listings.item_name)
+        for item in items_to_show.listings:
+            user_watchlist.append(item.listings)
+            print("appending: ", item.listings)
+        print("Final list: ", user_watchlist)
+        return render(request, "auctions/watchlist.html", {"watchlist": Watchlist.objects.filter(user=request.user)})
     except:
         messages.error(request, (f'Log in to view your watchlist'))
         return render(request, "auctions/watchlist.html", {"watchlist": None})
@@ -154,7 +166,6 @@ def api_save_to_watchlist(request, id):
     if request.user.is_authenticated: 
         item = Listings.objects.get(id=id)
         if Watchlist.objects.filter(user = request.user,listings = item).exists():
-            #watchlist = Watchlist.objects.get(user = request.user, id=id)
             watchlist = Watchlist.objects.filter(user = request.user,listings = item)
             watchlist.delete()
             newstate = "unfavorite"

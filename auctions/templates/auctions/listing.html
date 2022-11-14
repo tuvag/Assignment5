@@ -9,7 +9,7 @@
 
   <!-- listing.id is passed in wrong here, working on a way to pass it into the function through the onclick -->
   <img
-    src="media/images/unfavorite.png"
+    src="media/images/{{state}}.png"
     class="fav_image"
     onclick='watchlist_toggle("{{listings.id}}")' />
   <h3>{{ listings.item_name }}</h3>
@@ -61,19 +61,6 @@
 </div>
 
 <script>
-  /* document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.fav_image').onclick = function () {
-        const lid = fav_img.lid 
-        fetch(`/api_save_to_watchlist/${lid}`)
-        .then(response => response.json())
-        .then(data => {console.log(data);
-        update_icon(data)})}}) */
-
-  /* document.addEventListener('DOMContentLoaded', watchlist_toggle)
-    function testing_button() {
-        alert(`Waddup Fella??`)
-    } */
-
   function watchlist_toggle(listing_id) {
     fetch(`api_save_to_watchlist/${listing_id}`)
       .then((response) => {
@@ -91,5 +78,6 @@
     filename = `media/images/${newstate}.png`;
     document.querySelector(".fav_image").src = filename;
   }
+
 </script>
 {% endblock %}
