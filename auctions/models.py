@@ -43,7 +43,7 @@ class Listings(models.Model):
 
 class Watchlist(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user")
-    listings = models.ManyToManyField(Listings, related_name="listings", blank=True)
+    listings = models.ForeignKey(Listings, default = "", on_delete=models.CASCADE)
 
     def __str__(self):
         return f"{self.user}'s watchlist"

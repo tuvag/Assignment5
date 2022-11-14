@@ -130,8 +130,8 @@ def filter_category(request, id):
 # a users saved listings
 def watchlist(request):
     try:
-        items_to_show = Watchlist.objects.get(user = request.user)
-        return render(request, "auctions/watchlist.html", {"watchlist": items_to_show.listings.all()})
+        items_to_show = Watchlist.objects.filter(user = request.user)
+        return render(request, "auctions/watchlist.html", {"watchlist": items_to_show})
     except:
         messages.error(request, (f'Log in to view your watchlist'))
         return render(request, "auctions/watchlist.html", {"watchlist": None})
@@ -141,15 +141,14 @@ def save_to_watchlist(request, id):
     if request.user.is_authenticated: 
         item = Listings.objects.get(id=id)
         if Watchlist.objects.filter(user = request.user, listings = item).exists():
-            watchlist = Watchlist.objects.get(user = request.user, listings = item)
+            watchlist = Watchlist(user = request.user, listings = item)
+            messages.error(request, (f'This item is already in you watchlist'))
         else: 
-            watchlist = Watchlist(user = request.user)
-            watchlist.listings.add(item)
+            watchlist = Watchlist(user = request.user, listings = item)
             watchlist.save()
-        cnt = Watchlist.objects.filter(user=request.user, id = id)
-        print("This is how many items is in the watchlist: ", cnt)
+            messages.success(request, (f'This item was sucessfully added to your watchlist'))
 
-    return render(request, "auctions/watchlist.html", {"watchlist": watchlist.listings.all()})
+    return render(request, "auctions/watchlist.html", {"watchlist": Watchlist.objects.filter(user=request.user).all()})
 
 def api_save_to_watchlist(request, id):
     if request.user.is_authenticated: 
@@ -160,15 +159,9 @@ def api_save_to_watchlist(request, id):
             watchlist.delete()
             newstate = "unfavorite"
         else: 
-            watchlist = Watchlist(user = request.user)
+            watchlist = Watchlist(user = request.user, listings= item)
+            watchlist.save()
             newstate = "favorite"
-
-        cnt = Watchlist.objects.filter(user = request.user)
-        print("This is how many items is in the watchlist: ", cnt)
-        watchlist.save()
-        to_add = Listings.objects.get(id = id)
-        watchlist.listings.add(to_add)
-        watchlist.save()
         print("Inside api_save_to_watchlist, and curr_value is: ", newstate)
 
     return JsonResponse({'curr_value' : newstate})
