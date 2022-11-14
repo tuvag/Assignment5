@@ -97,11 +97,13 @@ def listing(request,id):
 
     if listing.sold == True:
         return redirect('close_listing', id = id)
-
-    if Watchlist.objects.filter(user = request.user,listings = listing).exists():
-        curr_state = "favorite"
+    if request.user.is_authenticated: 
+        if Watchlist.objects.filter(user = request.user,listings = listing).exists():
+            curr_state = "favorite"
+        else:
+            curr_state = "unfavorite"
     else:
-        curr_state = "unfavorite"
+        curr_state = ""
    
     return render(request, "auctions/listing.html",{"listings":listing, "comments":comments, "state": curr_state})
 

@@ -8,10 +8,12 @@
   <!-- <button class="test" onclick="testing_button()">Test</button> -->
 
   <!-- listing.id is passed in wrong here, working on a way to pass it into the function through the onclick -->
+  {% if user.is_authenticated %}
   <img
     src="media/images/{{state}}.png"
     class="fav_image"
     onclick='watchlist_toggle("{{listings.id}}")' />
+  {% endif %}
   <h3>{{ listings.item_name }}</h3>
   {% if listings.img %}
   <img src="{{ listings.img.url }}" id="l_img" class="l_img" />
