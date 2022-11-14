@@ -11,7 +11,7 @@
 {% for listings in watchlist %}
 {% if listings.sold == False %}
 <div class="active_listing">
-    <img src="media/images/unfavorite.png" class="fav_image">
+    <img src="media/images/favorite.png" class="fav_image"  onclick='watchlist_toggle("{{listings.id}}")'>
 
     <a href="{% url 'listing' listings.id %}"><h3>{{listings.item_name}}</h3></a>
 
@@ -25,6 +25,24 @@
 {% endfor %}
 {% endif %}
 
-
+<script>
+    function watchlist_toggle(listing_id) {
+      fetch(`api_save_to_watchlist/${listing_id}`)
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+          update_icon(data);
+        });
+    }
+  
+    function update_icon(data) {
+      newstate = data.curr_value;
+      filename = `media/images/${newstate}.png`;
+      document.querySelector(".fav_image").src = filename;
+    }
+  
+  </script>
 
 {% endblock %}

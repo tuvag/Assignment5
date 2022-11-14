@@ -136,14 +136,10 @@ def filter_category(request, id):
 def watchlist(request):
     try:
         user_watchlist = []
-        items_to_show = Watchlist.objects.filter(user = request.user).listings
-        print("Watchlist.objects.filter(user = request.user) is", items_to_show)
-        print("items_to_show.first() is ", items_to_show.first().listings.item_name)
-        for item in items_to_show.listings:
+        items_to_show = Watchlist.objects.filter(user = request.user)
+        for item in items_to_show:
             user_watchlist.append(item.listings)
-            print("appending: ", item.listings)
-        print("Final list: ", user_watchlist)
-        return render(request, "auctions/watchlist.html", {"watchlist": Watchlist.objects.filter(user=request.user)})
+        return render(request, "auctions/watchlist.html", {"watchlist": user_watchlist})
     except:
         messages.error(request, (f'Log in to view your watchlist'))
         return render(request, "auctions/watchlist.html", {"watchlist": None})
@@ -159,8 +155,12 @@ def save_to_watchlist(request, id):
             watchlist = Watchlist(user = request.user, listings = item)
             watchlist.save()
             messages.success(request, (f'This item was sucessfully added to your watchlist'))
+        user_watchlist = Watchlist.objects.filter(user=request.user)
+        display_watchlist = []
+        for item in user_watchlist:
+            display_watchlist.append(item.listings)
 
-    return render(request, "auctions/watchlist.html", {"watchlist": Watchlist.objects.filter(user=request.user)})
+    return render(request, "auctions/watchlist.html", {"watchlist": display_watchlist})
 
 def api_save_to_watchlist(request, id):
     if request.user.is_authenticated: 
@@ -173,7 +173,6 @@ def api_save_to_watchlist(request, id):
             watchlist = Watchlist(user = request.user, listings= item)
             watchlist.save()
             newstate = "favorite"
-        print("Inside api_save_to_watchlist, and curr_value is: ", newstate)
 
     return JsonResponse({'curr_value' : newstate})
 
