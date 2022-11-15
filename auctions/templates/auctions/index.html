@@ -12,12 +12,12 @@
       <h2>{{m}}</h2>
       {% endfor %}
       {% if l.img %}
-      <img src="{{ l.img.url }}" class="l_img">
+      <img src="{{ l.img.url }}" id="l_img" class="l_img">
         
           {% endif %}
-         <!--  {% if user.is_authenticated %}
-            <img src="media/images/unfavorite.png" class="fav_image">
-          {% endif %} -->
+          {% if user.is_authenticated %}
+            <img src="/media/images/favorite.png" class="toggler" id="toggler_{{l.id}}" onclick='watchlist_toggle({{l.id}});'>
+            {% endif %}
         <a href="{% url 'listing' l.id %}">
             <h4>{{ l.item_name }}</h4>  </a>
             
@@ -28,4 +28,5 @@
     {% endif %}
     {% endfor %}
 </article>
+
 {% endblock %}
