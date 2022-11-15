@@ -131,7 +131,7 @@ def filter_category(request, id):
     listings_category = Listings.objects.filter(listing_category = id)
     if listings_category is Empty: 
         msg = f'There are no listings in this category.'
-        return (request, "auctions/index.html", {"listings": listings_category, "message":msg})
+        return render(request, "auctions/index.html", {"listings": listings_category, "message":msg})
     return render(request, "auctions/index.html", {"listings": listings_category})
 
 # a users saved listings
@@ -164,7 +164,7 @@ def save_to_watchlist(request, id):
 
     return render(request, "auctions/watchlist.html", {"watchlist": display_watchlist})
 
-def api_save_to_watchlist(request, id):
+def api_toggle_watchlist(request, id):
     if request.user.is_authenticated: 
         item = Listings.objects.get(id=id)
         if Watchlist.objects.filter(user = request.user,listings = item).exists():
@@ -175,8 +175,16 @@ def api_save_to_watchlist(request, id):
             watchlist = Watchlist(user = request.user, listings= item)
             watchlist.save()
             newstate = "favorite"
-
     return JsonResponse({'curr_value' : newstate})
+
+def api_watchlist_state(request, id):
+    if request.user.is_authenticated: 
+        item = Listings.objects.get(id=id)
+        if Watchlist.objects.filter(user = request.user,listings = item).exists():
+            current_state = "favorite"
+        else: 
+            current_state = "unfavorite"
+    return JsonResponse({'curr_value' : current_state})
 
 def api_listing_toatals(request):
     watchlisted = Watchlist.objects.filter(user=request.user).count()

@@ -29,9 +29,7 @@
   </ul>
 
   {% if user.is_authenticated %}
-  <a href="{% url 'save_to_watchlist' listings.id %}"
-    ><button>Add to Watch List</button></a
-  >
+  <a href="{% url 'save_to_watchlist' listings.id %}"><button>Add to Watch List</button></a>
   {% endif %} {% if user == listings.lister %}
   <a href="{% url 'close_listing' listings.id %}"
     ><button>Close Listing</button></a
@@ -62,24 +60,5 @@
   </form>
 </div>
 
-<script>
-  function watchlist_toggle(listing_id) {
-    fetch(`api_save_to_watchlist/${listing_id}`)
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data);
-        update_icon(data);
-      });
-  }
 
-  function update_icon(data) {
-    newstate = data.curr_value;
-    // alert(`This is the current value of the state: ${newstate}`);
-    filename = `media/images/${newstate}.png`;
-    document.querySelector(".fav_image").src = filename;
-  }
-
-</script>
 {% endblock %}
